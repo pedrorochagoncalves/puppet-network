@@ -40,6 +40,7 @@ class network (
   $interfaces_hash           = undef,
 
   $routes_hash               = undef,
+  $mroutes_hash              = undef,
 
   $hostname_file_template   = "network/hostname-${::osfamily}.erb",
 
@@ -101,10 +102,17 @@ class network (
       undef   => $routes_hash,
       default => $hiera_routes_hash,
     }
+
+    $hiera_mroutes_hash = hiera_hash('network::mroutes_hash',undef)
+    $real_mroutes_hash = $hiera_mroutes_hash ? {
+      undef   => $mroutes_hash,
+      default => $hiera_mroutes_hash,
+    }
   }
   else {
     $real_interfaces_hash = $interfaces_hash
     $real_routes_hash     = $routes_hash
+    $real_mroutes_hash    = $mroutes_hash
   }
 
 
@@ -202,6 +210,10 @@ class network (
     create_resources('network::interface', $real_interfaces_hash)
   }
 
+  if $real_mroutes_hash {
+    create_resources('network::mroute', $real_mroutes_hash)
+  }
+
   if $real_routes_hash {
     if $::osfamily == 'Suse' {
       file { '/etc/sysconfig/network/routes':
@@ -292,4 +304,3 @@ class network (
   }
 
 }
-
