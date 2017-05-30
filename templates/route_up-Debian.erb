@@ -11,12 +11,12 @@ if [ "$IFACE" = "<%= @interface -%>" ]; then
     then #"IPv6"
         if [ $ADDRESS = '0000:0000:0000:0000:0000:0000:0000:0000/0' ]
         then
-            sudo ip -6 route add default via <%= @gateway[id] %> dev <%= @interface %>
+            ip -6 route add default via <%= @gateway[id] %> dev <%= @interface %>
         else
-            sudo ip -6 route add $ADDRESS dev <%= @interface %>
+            ip -6 route add $ADDRESS dev <%= @interface %>
          fi
     else #"IPv4"
-        sudo ip route add $ADDRESS via <%= @gateway[id] %> dev <%= @interface %>
+        ip route add $ADDRESS via <%= @gateway[id] %> dev <%= @interface %>
     fi
 
 <%- end -%>

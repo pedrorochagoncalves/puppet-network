@@ -3,5 +3,5 @@
 ### File managed by Puppet
 #
 if [ "$IFACE" = "<%= @interface -%>" ]; then
-    sudo ip -6 route flush dev <%= @interface -%>
-    sudo ip route flush dev <%= @interface -%>
+    ip -6 route flush dev <%= @interface -%>
+    ip route flush dev <%= @interface -%>
