@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+### File managed by Puppet
+#
+
+<%- (0..(@ipaddress.length-1)).each do |id| -%>
+
+    ADDRESS='<%= @ipaddress[id] %>/<%= @netmask[id] %>'
+
+    if [[ $ADDRESS =~ .*:.* ]]
+    then #"IPv6"
+        if [ $ADDRESS = '0000:0000:0000:0000:0000:0000:0000:0000/0' ]
+        then
+            ip -6 route chg default via <%= @gateway[id] %> dev <%= @interface %>
+        else
+            EXIST=`ip -6 route show $ADDRESS | wc -l`
+
+            if [ $EXIST -eq 0 ]
+            then
+                ip -6 route add $ADDRESS dev <%= @interface %>
+            fi
+
+            if [ $EXIST -eq 1 ]
+            then
+                ip route chg $ADDRESS dev <%= @interface %>
+            fi
+         fi
+    else #"IPv4"
+        EXIST=`ip route show $ADDRESS | wc -l`
+
+        if [ $EXIST -eq 0 ]
+        then
+            ip route add $ADDRESS via <%= @gateway[id] %> dev <%= @interface %>
+        fi
+
+        if [ $EXIST -eq 1 ]
+        then
+            ip route chg $ADDRESS via <%= @gateway[id] %> dev <%= @interface %>
+        fi
+    fi
+
+<%- end -%>

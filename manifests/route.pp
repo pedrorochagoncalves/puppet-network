@@ -78,24 +78,39 @@ define network::route (
       }
     }
     'Debian': {
-      file { "routeup-${name}":
-        ensure  => $ensure,
-        mode    => '0755',
-        owner   => 'root',
-        group   => 'root',
-        path    => "/etc/network/if-up.d/z90-route-${name}",
-        content => template('network/route_up-Debian.erb'),
-        notify  => $network::manage_config_file_notify,
-      }
-      file { "routedown-${name}":
-        ensure  => $ensure,
-        mode    => '0755',
-        owner   => 'root',
-        group   => 'root',
-        path    => "/etc/network/if-down.d/z90-route-${name}",
-        content => template('network/route_down-Debian.erb'),
-        notify  => $network::manage_config_file_notify,
-      }
+        file { "routerefresh-${name}":
+            ensure  => $ensure,
+            mode    => '0755',
+            owner   => 'root',
+            group   => 'root',
+            path    => "/etc/network/run/z90-route-refresh-${name}",
+            content => template('network/route_refresh-Debian.erb'),
+            notify => Exec['refresh-routes-${name}'],
+        }
+
+        exec { 'refresh-routes-${name}':
+            returns => [0,1,2],
+            logoutput => true,
+            command => "/bin/bash  '/etc/network/run/z90-route-refresh-${name}'",
+        }
+
+        file { "routeup-${name}":
+            ensure  => $ensure,
+            mode    => '0755',
+            owner   => 'root',
+            group   => 'root',
+            path    => "/etc/network/if-up.d/z90-route-${name}",
+            content => template('network/route_up-Debian.erb'),
+        }
+
+        file { "routedown-${name}":
+            ensure  => $ensure,
+            mode    => '0755',
+            owner   => 'root',
+            group   => 'root',
+            path    => "/etc/network/if-down.d/z90-route-${name}",
+            content => template('network/route_down-Debian.erb'),
+        }
     }
     default: { fail('Operating system not supported')  }
   }

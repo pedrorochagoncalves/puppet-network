@@ -3,7 +3,6 @@
 ### File managed by Puppet
 #
 if [ "$IFACE" = "<%= @interface -%>" ]; then
-<%- (0..(@ipaddress.length-1)).each do |id| -%>
-    ip route del <%= @ipaddress[id] %>/<%= @netmask[id] %> via <%= @gateway[id] %> dev <%= @interface %>
-<%- end -%>
+    ip -6 route flush dev <%= @interface -%>
+    ip route flush dev <%= @interface -%>
 fi
