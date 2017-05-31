@@ -3,6 +3,6 @@
 ### File managed by Puppet
 #
 if [ "$IFACE" = "<%= @interface -%>" ]; then
-    ip -6 route flush dev <%= @interface -%>
-    ip route flush dev <%= @interface -%>
+    ip -6 route flush dev <%= @interface %>
+    ip route flush dev <%= @interface %>
 fi
