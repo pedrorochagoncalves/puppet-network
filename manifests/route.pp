@@ -83,7 +83,7 @@ define network::route (
             mode    => '0755',
             owner   => 'root',
             group   => 'root',
-            path    => "/etc/network/run/z90-route-refresh-${name}",
+            path    => "/tmp/route-refresh-${name}",
             content => template('network/route_refresh-Debian.erb'),
             notify => Exec['refresh-routes-${name}'],
         }
@@ -91,7 +91,7 @@ define network::route (
         exec { 'refresh-routes-${name}':
             returns => [0,1,2],
             logoutput => true,
-            command => "/bin/bash  '/etc/network/run/z90-route-refresh-${name}'",
+            command => "/bin/bash  '/tmp/route-refresh-${name}'",
         }
 
         file { "routeup-${name}":
