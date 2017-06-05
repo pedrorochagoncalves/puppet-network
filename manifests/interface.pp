@@ -102,7 +102,7 @@ define network::interface (
   $ensure          = 'present',
   $template        = "network/interface/${::osfamily}.erb",
   $interface       = $name,
-  $restart_all_nic = false,
+  $restart_all_nic = true,
 
   $enable_dhcp     = false,
 
