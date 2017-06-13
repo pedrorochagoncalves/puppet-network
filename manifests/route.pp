@@ -67,32 +67,32 @@ define network::route (
 
   case $::osfamily {
     'RedHat': {
-      file { "route-${interface}":
+      file { "route-${name}":
         ensure  => $ensure,
         mode    => '0644',
         owner   => 'root',
         group   => 'root',
-        path    => "/etc/sysconfig/network-scripts/route-${interface}",
+        path    => "/etc/sysconfig/network-scripts/route-${name}",
         content => template('network/route-RedHat.erb'),
         notify  => $network::manage_config_file_notify,
       }
     }
     'Debian': {
-        file { "routerefresh-${interface}":
+        file { "routerefresh-${name}":
             ensure  => $ensure,
             mode    => '0755',
             owner   => 'root',
             group   => 'root',
-            path    => "/tmp/route-refresh-${interface}",
+            path    => "/tmp/route-refresh-${name}",
             content => template('network/route_refresh-Debian.erb'),
-            notify => Exec["refresh-routes-${interface}"],
+            notify => Exec["refresh-routes-${name}"],
         }
 
         exec { "refresh-routes-${interface}":
             returns => [0,1,2],
             logoutput => true,
             refreshonly => true,
-            command => "/bin/bash  '/tmp/route-refresh-${interface}'",
+            command => "/bin/bash  '/tmp/route-refresh-${name}'",
         }
 
         file { "routeup-${interface}":
@@ -100,7 +100,7 @@ define network::route (
             mode    => '0755',
             owner   => 'root',
             group   => 'root',
-            path    => "/etc/network/if-up.d/z90-route-${interface}",
+            path    => "/etc/network/if-up.d/z90-route-${name}",
             content => template('network/route_up-Debian.erb'),
         }
 
@@ -109,7 +109,7 @@ define network::route (
             mode    => '0755',
             owner   => 'root',
             group   => 'root',
-            path    => "/etc/network/if-down.d/z90-route-${interface}",
+            path    => "/etc/network/if-down.d/z90-route-${name}",
             content => template('network/route_down-Debian.erb'),
         }
     }
