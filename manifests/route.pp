@@ -88,14 +88,14 @@ define network::route (
             notify => Exec["refresh-routes-${name}"],
         }
 
-        exec { "refresh-routes-${interface}":
+        exec { "refresh-routes-${name}":
             returns => [0,1,2],
             logoutput => true,
             refreshonly => true,
             command => "/bin/bash  '/tmp/route-refresh-${name}'",
         }
 
-        file { "routeup-${interface}":
+        file { "routeup-${name}":
             ensure  => $ensure,
             mode    => '0755',
             owner   => 'root',
@@ -104,7 +104,7 @@ define network::route (
             content => template('network/route_up-Debian.erb'),
         }
 
-        file { "routedown-${interface}":
+        file { "routedown-${name}":
             ensure  => $ensure,
             mode    => '0755',
             owner   => 'root',
